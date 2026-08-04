@@ -1,0 +1,330 @@
+/* ============================================================
+   Travel Alberta — Seasonal Toggle POC
+   Page & hero chrome matched to Figma (PHASE 2 frames).
+   Body content below the hero is representative POC content.
+   ============================================================ */
+
+:root {
+  --red: #9c0f00;          /* Figma logo / title box */
+  --red-2: #7d0c00;
+  --teal: #073142;         /* Figma footer */
+  --mint: #e6f7f5;         /* Figma section bg */
+  --ink: #000000;
+  --muted: #55605f;
+  --line: #e2e6e4;
+  --white: #ffffff;
+  --magenta: #c4428a;      /* utility badge */
+  --nav-h: 100px;
+  --radius: 8px;
+  --shadow: 0 6px 24px rgba(7, 49, 66, 0.10);
+
+  /* Futura is present on macOS; graceful fallbacks otherwise */
+  --display: 'Futura PT', 'Futura', 'Century Gothic', 'Trebuchet MS', sans-serif;
+  --sans: 'Futura PT', 'Futura', 'Century Gothic', 'Avenir Next', 'Segoe UI', sans-serif;
+
+  /* Seasonal accent (summer default) used by body content only */
+  --season-a: #f2a23c;
+  --season-b: #6ba368;
+  --season-c: #d97a34;
+  --hero-tint: linear-gradient(90deg, rgba(0,0,0,.20), rgba(0,0,0,0) 55%);
+}
+html[data-season="winter"] {
+  --season-a: #7fa8d4;
+  --season-b: #b9d4e6;
+  --season-c: #4b6b8a;
+  /* cool wash over the (unchanged) hero photo for the winter state */
+  --hero-tint: linear-gradient(90deg, rgba(20,45,80,.34), rgba(20,45,80,.05) 60%),
+               linear-gradient(0deg, rgba(90,130,180,.18), rgba(90,130,180,.18));
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--white);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+.wrap { max-width: 1228px; margin: 0 auto; padding: 0 24px; }
+
+/* ---------- Header (matched to Figma Nav - Desktop) ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+}
+.site-header .bar { display: flex; align-items: stretch; height: var(--nav-h); }
+.logo {
+  background: var(--red); color: #fff; width: 150px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-decoration: none; font-family: var(--display); line-height: 1;
+  letter-spacing: 3px; font-weight: 700;
+}
+.logo .a { font-size: 17px; }
+.logo .tri { font-size: 11px; margin: 3px 0; opacity: .95; }
+.logo .c { font-size: 12px; letter-spacing: 4px; }
+.nav { display: flex; align-items: center; gap: 34px; padding: 0 40px; }
+.nav a { color: var(--ink); text-decoration: none; font-size: 15px; font-weight: 500; }
+.nav a:hover { color: var(--red); }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 22px; padding-right: 28px; }
+.nav-right .util { font-size: 13px; color: var(--ink); font-weight: 500; }
+.nav-right .icons { display: flex; align-items: center; gap: 16px; font-size: 17px; color: var(--ink); }
+.badge-dot {
+  background: var(--magenta); color: #fff; font-size: 11px; font-weight: 700;
+  width: 18px; height: 18px; border-radius: 50%; display: inline-flex;
+  align-items: center; justify-content: center; margin-left: -6px;
+}
+@media (max-width: 960px){ .nav, .nav-right .util { display: none; } }
+
+/* ---------- Breadcrumb ---------- */
+.breadcrumb { background: #fff; }
+.breadcrumb .wrap { padding-top: 14px; padding-bottom: 4px; font-size: 13px; color: var(--muted); }
+.breadcrumb a { color: var(--muted); text-decoration: none; }
+.breadcrumb .sep { margin: 0 8px; }
+.breadcrumb .here { color: var(--ink); }
+
+/* ---------- Sticky season bar (Variant B) ---------- */
+.season-bar { position: sticky; top: var(--nav-h); z-index: 40; background: var(--teal); color: #fff; box-shadow: var(--shadow); }
+.season-bar .wrap { display: flex; align-items: center; gap: 18px; padding-top: 12px; padding-bottom: 12px; }
+.season-bar .label { font-size: 13px; opacity: .85; }
+
+/* ============================================================
+   HERO — three treatments matched to Figma per page
+   ============================================================ */
+
+/* Outdoor Activities: full-bleed photo + deep-red title box lower-left */
+.hero--overlay { position: relative; width: 100%; }
+.hero--overlay .photo {
+  width: 100%; aspect-ratio: 1440 / 561; background-size: cover; background-position: center;
+}
+.hero--overlay .photo::after { content:""; position:absolute; inset:0; background: var(--hero-tint); transition: background .5s ease; }
+.hero--overlay .titlebox {
+  position: absolute; left: max(24px, calc((100% - 1228px)/2 + 24px)); bottom: 34px;
+  background: var(--red); color: #fff; width: 430px; max-width: 46%;
+  padding: 34px 34px 30px;
+}
+.hero--overlay .titlebox h1 { font-family: var(--display); font-weight: 700; font-size: 44px; line-height: .98; margin: 0 0 14px; }
+.hero--overlay .titlebox p { margin: 0; font-size: 14.5px; line-height: 1.5; opacity: .96; }
+
+/* Trip Ideas: short banner photo, then title bar on white */
+.hero--banner .photo { width: 100%; aspect-ratio: 1440 / 300; background-size: cover; background-position: center; position: relative; }
+.hero--banner .photo::after { content:""; position:absolute; inset:0; background: var(--hero-tint); transition: background .5s ease; }
+.hero-titlebar { padding: 34px 0 6px; }
+.hero-titlebar .row { display: flex; align-items: flex-start; gap: 40px; }
+.hero-titlebar h1 { font-family: var(--display); font-weight: 700; font-size: 46px; margin: 0; flex: 0 0 auto; color: var(--ink); }
+.hero-titlebar .aside { flex: 1; display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; padding-top: 8px; }
+.hero-titlebar .aside p { margin: 0; font-size: 15px; max-width: 460px; color: var(--ink); }
+
+/* Banff: photo with centered white title, then red rule + bold intro */
+.hero--centered .photo {
+  position: relative; width: 100%; aspect-ratio: 1440 / 330; min-height: 300px;
+  background-size: cover; background-position: center;
+  display: flex; align-items: center; justify-content: center;
+}
+.hero--centered .photo::after { content:""; position:absolute; inset:0; background: linear-gradient(0deg, rgba(0,0,0,.28), rgba(0,0,0,.12)); transition: background .5s ease; }
+html[data-season="winter"] .hero--centered .photo::after { background: linear-gradient(0deg, rgba(20,45,80,.42), rgba(20,45,80,.18)); }
+.hero--centered h1 {
+  position: relative; z-index: 2; color: #fff; font-family: var(--display); font-weight: 700;
+  font-size: 52px; letter-spacing: 1px; text-align: center; text-shadow: 0 3px 22px rgba(0,0,0,.45); margin: 0;
+}
+.hero--centered .redrule { height: 34px; background: var(--red); }
+.hero--centered .intro-band { padding: 30px 0 4px; }
+.hero--centered .intro-band .lead { font-family: var(--display); font-weight: 700; font-size: 26px; line-height: 1.25; margin: 0; max-width: 620px; }
+
+/* ---------- Sections (body content — POC) ---------- */
+section { padding: 54px 0; }
+section.mint { background: var(--mint); }
+.section-title { font-family: var(--display); font-weight: 700; font-size: 32px; text-align: center; margin: 0 0 8px; }
+.section-sub { text-align: center; color: var(--muted); max-width: 820px; margin: 0 auto 32px; font-size: 15px; }
+.eyebrow { color: var(--red); font-weight: 700; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+
+.grid { display: grid; gap: 22px; }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 900px){ .grid-4 { grid-template-columns: repeat(2,1fr);} .grid-3,.grid-2{ grid-template-columns:1fr;} }
+
+.card { background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.card .thumb { aspect-ratio: 4/3; position: relative;
+  background: radial-gradient(90% 70% at 70% 20%, rgba(255,255,255,.42), transparent 60%), linear-gradient(150deg, var(--season-a), var(--season-b)); transition: background .5s ease; }
+.card .thumb::after { content:""; position:absolute; left:0; right:0; bottom:0; height:45%; background: linear-gradient(to top, rgba(7,49,66,.4), transparent); }
+.card .thumb.tall { aspect-ratio: 3/4; }
+.card .body { padding: 14px 16px 18px; }
+.card h3 { margin: 0 0 4px; font-size: 16px; font-family: var(--display); font-weight: 700; }
+.card h3 a { color: var(--ink); text-decoration: none; }
+.card .link { color: var(--red); font-weight: 700; font-size: 14px; text-decoration: none; }
+.card .meta { color: var(--muted); font-size: 13px; margin-top: 6px; }
+.stars { color: var(--season-c); letter-spacing: 1px; font-size: 13px; }
+
+.feature { position: relative; border-radius: var(--radius); overflow: hidden; min-height: 300px; display: flex; align-items: center; color: #fff; padding: 40px; box-shadow: var(--shadow);
+  background: linear-gradient(90deg, rgba(7,49,66,.62), rgba(7,49,66,.05)), linear-gradient(150deg, var(--season-c), var(--season-a) 60%, var(--season-b)); transition: background .5s ease; }
+.feature .inner { max-width: 440px; }
+.feature h2 { font-family: var(--display); font-weight: 700; font-size: 30px; margin: 0 0 10px; }
+.btn { display: inline-block; margin-top: 12px; background: #fff; color: var(--ink); padding: 11px 22px; border-radius: 30px; font-weight: 700; font-size: 14px; text-decoration: none; border: none; cursor: pointer; font-family: var(--sans); }
+
+.tagrow { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px; }
+.tag { font-size: 12px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 20px; background:#fff; color: var(--muted); }
+.tag.active { background: var(--red); color:#fff; border-color: var(--red); }
+
+/* ---------- Seasonal content swap ---------- */
+[data-show] { transition: opacity .35s ease; }
+html[data-season="summer"] [data-show="winter"],
+html[data-season="winter"] [data-show="summer"] { display: none !important; }
+
+/* ---------- Toggle components ---------- */
+.toggle { display: inline-flex; }
+.toggle .seg { border: none; cursor: pointer; font-family: var(--sans); font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; gap: 7px; transition: all .2s ease; }
+
+/* Variant A — segmented pill (matches Figma "Choose a season") */
+.toggle--pill { background: #f1f3f2; border-radius: 30px; padding: 4px; border: 1px solid var(--line); }
+.toggle--pill .seg { background: transparent; color: var(--muted); padding: 9px 20px; border-radius: 26px; }
+html[data-season="summer"] .toggle--pill .seg[data-season-btn="summer"],
+html[data-season="winter"] .toggle--pill .seg[data-season-btn="winter"] { background: var(--red); color:#fff; }
+.season-picker { display: flex; align-items: center; gap: 14px; }
+.season-picker .cta-label { font-weight: 700; color: var(--ink); font-size: 14px; }
+
+/* Variant B — sticky bar toggle */
+.toggle--bar { background: rgba(255,255,255,.14); border-radius: 30px; padding: 4px; }
+.toggle--bar .seg { background: transparent; color: rgba(255,255,255,.8); padding: 8px 22px; border-radius: 26px; }
+html[data-season="summer"] .toggle--bar .seg[data-season-btn="summer"],
+html[data-season="winter"] .toggle--bar .seg[data-season-btn="winter"] { background:#fff; color: var(--teal); }
+
+/* Variant C — hero tabs */
+.toggle--hero { gap: 10px; }
+.toggle--hero .seg { background: rgba(255,255,255,.16); color:#fff; padding: 13px 28px; border-radius: 4px; font-size: 15px; letter-spacing: 1px; text-transform: uppercase; border: 2px solid rgba(255,255,255,.55); }
+html[data-season="summer"] .toggle--hero .seg[data-season-btn="summer"],
+html[data-season="winter"] .toggle--hero .seg[data-season-btn="winter"] { background:#fff; color: var(--ink); border-color:#fff; }
+
+/* ---------- Footer ---------- */
+.site-footer { background: var(--teal); color: rgba(255,255,255,.8); padding: 48px 0 30px; }
+.site-footer .cols { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 30px; }
+.site-footer h4 { color:#fff; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; margin: 0 0 14px; font-family: var(--display); }
+.site-footer a { color: rgba(255,255,255,.8); text-decoration: none; display: block; font-size: 14px; margin-bottom: 8px; }
+.site-footer a:hover { color:#fff; }
+.foot-logo { font-family: var(--display); font-weight: 700; color:#fff; font-size: 22px; }
+.foot-bottom { border-top: 1px solid rgba(255,255,255,.15); margin-top: 34px; padding-top: 18px; font-size: 12px; opacity: .7; }
+@media (max-width: 900px){ .site-footer .cols { grid-template-columns: 1fr 1fr; } }
+
+/* ---------- Gallery (index) ---------- */
+.gallery-hero { background: var(--teal); color:#fff; padding: 60px 0 40px; }
+.gallery-hero h1 { font-family: var(--display); font-weight: 700; font-size: 42px; margin: 0 0 10px; }
+.gallery-hero p { opacity: .85; max-width: 680px; }
+.how { display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; }
+.how span { background: rgba(255,255,255,.12); padding: 8px 14px; border-radius: 20px; font-size: 13px; }
+.page-group { padding: 40px 0; border-bottom: 1px solid var(--line); }
+.page-group h2 { font-family: var(--display); font-weight: 700; font-size: 26px; margin: 0 0 4px; }
+.page-group .desc { color: var(--muted); margin: 0 0 24px; }
+.grid-3g { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+@media (max-width:900px){ .grid-3g{ grid-template-columns:1fr; } }
+.variant-card { display:block; text-decoration:none; color:var(--ink); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; transition: transform .2s ease, box-shadow .2s ease; }
+.variant-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.variant-card .preview { height: 120px; position: relative; background-size: cover; background-position: center; }
+.variant-card .preview .chip { position:absolute; bottom:10px; left:12px; background: rgba(0,0,0,.55); color:#fff; font-size:11px; padding:4px 10px; border-radius:20px; }
+.variant-card .vbody { padding: 14px 16px; }
+.variant-card h3 { margin:0 0 4px; font-size:15px; font-family:var(--display); font-weight:700; }
+.variant-card p { margin:0; font-size:13px; color:var(--muted); }
+.badge { display:inline-block; background:var(--red); color:#fff; font-size:11px; font-weight:700; padding:3px 9px; border-radius:4px; letter-spacing:.5px; }
+
+/* ============================================================
+   Figma-matched TOP PORTIONS + variants D/E
+   ============================================================ */
+
+/* Choose-a-season band (Figma Frame 6: control top-right) */
+.season-band { background: #fff; }
+.season-band .inner { display: flex; justify-content: flex-end; align-items: center; gap: 16px; padding: 26px 0 6px; }
+.season-band .ca-season { font-family: var(--display); font-weight: 600; font-size: 14px; color: var(--ink); }
+
+/* Intro heading + paragraph */
+.top-section { padding: 40px 0 56px; }
+.top-heading { font-family: var(--display); font-weight: 700; font-size: 36px; margin: 0 0 14px; color: var(--ink); }
+.top-heading.center { text-align: center; }
+.top-para { font-family: var(--sans); font-size: 15px; line-height: 1.6; color: var(--ink); margin: 0 0 30px; }
+.top-para.center { text-align: center; max-width: 980px; margin-left: auto; margin-right: auto; }
+
+/* Outdoor — activity grid (11 image cards + label) */
+.act-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px 22px; }
+.act { text-decoration: none; color: var(--ink); }
+.act-img { width: 100%; aspect-ratio: 16/9; border-radius: 4px; background-size: cover; background-position: center; }
+.act-cap { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-family: var(--display); font-weight: 600; font-size: 16px; }
+.act-cap b { color: var(--red); font-weight: 700; }
+.act:hover .act-cap { color: var(--red); }
+@media (max-width: 900px){ .act-grid { grid-template-columns: repeat(2,1fr); } }
+
+/* Trip — road-trip cards */
+.rt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.rt-card { text-decoration: none; color: var(--ink); display: block; }
+.rt-img { position: relative; width: 100%; aspect-ratio: 3/4; border-radius: 4px; background-size: cover; background-position: center; margin-bottom: 14px; }
+.rt-badge { position: absolute; top: 12px; right: 12px; background: var(--red); color: #fff; font-family: var(--display); font-weight: 700; font-size: 12px; padding: 6px 12px; border-radius: 3px; }
+.rt-tag { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,.6); color: #fff; font-size: 11px; padding: 5px 10px; border-radius: 3px; }
+.rt-card h3 { font-family: var(--display); font-weight: 700; font-size: 20px; margin: 0 0 8px; line-height: 1.15; }
+.rt-card p { font-size: 14px; color: #333; margin: 0 0 10px; }
+.rt-link { color: var(--red); font-weight: 700; font-size: 14px; }
+.rt-more { display: inline-block; margin-top: 26px; color: var(--red); font-weight: 700; font-size: 15px; text-decoration: none; }
+@media (max-width: 900px){ .rt-grid { grid-template-columns: 1fr; } }
+
+/* Banff — intro two-col + circular highlights + city-known bar */
+.city-known { display: flex; align-items: center; gap: 22px; padding: 12px 0; font-size: 12px; flex-wrap: wrap; }
+.city-known b { font-family: var(--display); font-weight: 700; font-size: 11px; letter-spacing: .5px; }
+.city-known span { color: #333; }
+.city-known span + span::before { content: "•"; color: var(--red); margin-right: 22px; margin-left: 0; }
+.bf-intro { display: grid; grid-template-columns: 1.9fr 1fr; gap: 48px; padding: 8px 0 8px; }
+.bf-intro .lead { font-family: var(--display); font-weight: 700; font-size: 26px; line-height: 1.25; margin: 0 0 18px; }
+.bf-intro p { font-size: 15px; line-height: 1.6; color: var(--ink); margin: 0 0 14px; }
+.bf-intro .links-label { font-family: var(--display); font-weight: 700; margin-top: 18px; margin-bottom: 6px; }
+.bf-links a { display: block; color: var(--red); font-size: 14px; text-decoration: none; margin-bottom: 4px; }
+.bf-detail { border-left: 3px solid var(--red); padding-left: 20px; }
+.bf-detail .row { margin-bottom: 16px; }
+.bf-detail b { display: block; font-family: var(--display); font-weight: 700; font-size: 13px; }
+.bf-detail span { font-size: 14px; color: #333; }
+.hl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+.hl { text-align: center; }
+.hl-img { width: 200px; height: 200px; border-radius: 50%; background-size: cover; background-position: center; margin: 0 auto 18px; }
+.hl h3 { font-family: var(--display); font-weight: 700; font-size: 19px; margin: 0 0 8px; }
+.hl p { font-size: 14px; color: #333; margin: 0; max-width: 300px; margin-inline: auto; }
+@media (max-width: 900px){ .bf-intro { grid-template-columns: 1fr; } .hl-grid { grid-template-columns: 1fr; } }
+
+/* Variant D — sun/snow switch */
+.toggle--switch { align-items: center; gap: 12px; }
+.toggle--switch .lab { font-family: var(--display); font-weight: 600; font-size: 14px; color: var(--muted); cursor: pointer; }
+html[data-season="summer"] .toggle--switch .lab[data-for="summer"],
+html[data-season="winter"] .toggle--switch .lab[data-for="winter"] { color: var(--red); }
+.switch-track { width: 58px; height: 30px; border-radius: 30px; background: var(--red); position: relative; cursor: pointer; border: none; padding: 0; transition: background .3s ease; }
+.switch-thumb { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: left .28s cubic-bezier(.4,1.3,.5,1); }
+html[data-season="winter"] .switch-thumb { left: 31px; }
+.switch-thumb::after { content: "☀"; }
+html[data-season="winter"] .switch-thumb::after { content: "❄"; }
+
+/* Variant E — underline tabs */
+.tabs-wrap { display: flex; justify-content: center; margin-bottom: 26px; }
+.toggle--tabs { border-bottom: 2px solid var(--line); gap: 0; }
+.toggle--tabs .seg { background: transparent; color: var(--muted); padding: 10px 26px; border-radius: 0; border-bottom: 3px solid transparent; margin-bottom: -2px; font-size: 15px; }
+html[data-season="summer"] .toggle--tabs .seg[data-season-btn="summer"],
+html[data-season="winter"] .toggle--tabs .seg[data-season-btn="winter"] { color: var(--red); border-bottom-color: var(--red); }
+
+/* ============================================================
+   Variant D — "Season spotlight" full-width band (high visibility)
+   Variant E — persistent floating segmented switcher
+   (These override the earlier D/E styles, which are no longer emitted.)
+   ============================================================ */
+
+/* D — full-width prompt band directly under the hero */
+.season-spotlight { background: var(--teal); color: #fff; }
+.season-spotlight .ss-inner { display: flex; align-items: center; justify-content: center; gap: 26px; padding: 22px 0; flex-wrap: wrap; }
+.season-spotlight .ss-prompt { font-family: var(--display); font-weight: 700; font-size: 20px; }
+.toggle--spotlight { display: inline-flex; background: rgba(255,255,255,.14); border-radius: 40px; padding: 5px; }
+.toggle--spotlight .seg { background: transparent; color: rgba(255,255,255,.85); padding: 12px 32px; border-radius: 36px; font-size: 16px; font-weight: 700; gap: 8px; border: none; cursor: pointer; font-family: var(--sans); display: inline-flex; align-items: center; transition: all .2s ease; }
+html[data-season="summer"] .toggle--spotlight .seg[data-season-btn="summer"],
+html[data-season="winter"] .toggle--spotlight .seg[data-season-btn="winter"] { background: #fff; color: var(--teal); box-shadow: 0 2px 10px rgba(0,0,0,.25); }
+
+/* E — floating pill fixed to the viewport, always visible */
+.season-float { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 60;
+  display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 44px;
+  box-shadow: 0 10px 34px rgba(7,49,66,.30); padding: 8px 10px 8px 18px; border: 1px solid var(--line); }
+.season-float .sf-label { font-family: var(--display); font-weight: 700; font-size: 12px; letter-spacing: .5px; text-transform: uppercase; color: var(--muted); }
+.toggle--float { display: inline-flex; background: #f1f3f2; border-radius: 36px; padding: 4px; }
+.toggle--float .seg { background: transparent; color: var(--muted); padding: 9px 20px; border-radius: 32px; font-size: 14px; font-weight: 700; gap: 6px; border: none; cursor: pointer; font-family: var(--sans); display: inline-flex; align-items: center; transition: all .2s ease; }
+html[data-season="summer"] .toggle--float .seg[data-season-btn="summer"],
+html[data-season="winter"] .toggle--float .seg[data-season-btn="winter"] { background: var(--red); color: #fff; }
+@media (max-width: 560px){ .season-float .sf-label { display: none; } }
