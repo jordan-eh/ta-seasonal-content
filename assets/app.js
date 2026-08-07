@@ -200,8 +200,101 @@ function toggleMarkup(variant) {
         ${seg("summer", "☀", "Summer")}${seg("winter", "❄", "Winter")}</div>`;
     case "f": // expanding season dial (Destination Vancouver pattern)
       return seasonDial();
+    case "h": // wordless sun/snow switch
+      return `
+      <button class="wswitch" type="button" role="switch" aria-checked="false" data-season-switch
+              aria-label="Switch season" onclick="flipSeason()">
+        <span class="ws-knob">
+          <span class="ws-glyph" data-show="summer" aria-hidden="true">☀</span>
+          <span class="ws-glyph" data-show="winter" aria-hidden="true">❄</span>
+        </span>
+      </button>`;
+    case "i": // semicircular season gauge
+      return seasonGauge();
   }
   return "";
+}
+
+/* Absolutely-positioned hero add-ons for the abstract variants (F–I).
+   On the overlay hero these anchor to the <section> (which carries the global
+   54px section padding); on banner/centered they anchor to .photo. */
+function heroOverlays(page, variant) {
+  switch (variant) {
+    case "f": return `<div class="dial-slot">${toggleMarkup("f")}</div>`;
+    case "g": return seasonScrubber(page);
+    case "h": return `<div class="hero-slot hero-slot--tr">${toggleMarkup("h")}</div>`;
+    case "i": return `<div class="hero-slot hero-slot--br">${toggleMarkup("i")}</div>`;
+  }
+  return "";
+}
+
+/* G — drag-to-wipe scrubber. Borrowed from before/after comparison sliders
+   (Knight Lab's JuxtaposeJS et al): the handle wipes a winter-graded copy of
+   the hero across the summer one, then snaps to the nearer season on release. */
+function seasonScrubber(page) {
+  return `
+  <div class="scrub-wrap">
+    <div class="scrub-winter" style="background-image:url('${page.hero.img}')"></div>
+    <div class="scrub-track" tabindex="0" role="slider" aria-label="Season"
+         aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Summer"
+         onpointerdown="scrubStart(event)" onkeydown="scrubKey(event)">
+      <span class="scrub-end scrub-end--s" aria-hidden="true">☀</span>
+      <span class="scrub-rail"></span>
+      <span class="scrub-end scrub-end--w" aria-hidden="true">❄</span>
+      <span class="scrub-handle" aria-hidden="true"></span>
+    </div>
+  </div>`;
+}
+
+/* I — semicircular gauge; the needle swings from sun to snowflake.
+   Reads like a thermostat / instrument dial rather than a labelled control. */
+function seasonGauge() {
+  return `
+  <div class="gauge">
+    <svg viewBox="0 0 198 102" aria-hidden="true" focusable="false">
+      <path class="g-track" d="M16,94 A83,83 0 0 1 182,94"></path>
+    </svg>
+    <span class="g-needle" aria-hidden="true"></span>
+    <span class="g-hub" aria-hidden="true"></span>
+    <button class="g-end g-end--s" type="button" data-season-btn="summer"
+            onclick="setSeason('summer')" aria-pressed="false" aria-label="Summer">☀</button>
+    <button class="g-end g-end--w" type="button" data-season-btn="winter"
+            onclick="setSeason('winter')" aria-pressed="false" aria-label="Winter">❄</button>
+  </div>`;
+}
+
+/* H — flip to the opposite season (the switch carries no season labels) */
+function flipSeason() {
+  setSeason(document.documentElement.getAttribute("data-season") === "winter" ? "summer" : "winter");
+}
+
+/* G — scrubber drag handling. --x drives both the wipe and the handle. */
+function scrubSet(wrap, pct) {
+  wrap.style.setProperty("--x", Math.max(0, Math.min(100, pct)) + "%");
+}
+function scrubStart(e) {
+  const track = e.currentTarget, wrap = track.closest(".scrub-wrap");
+  const pctOf = (ev) => {
+    const b = track.getBoundingClientRect();
+    return ((ev.clientX - b.left) / b.width) * 100;
+  };
+  wrap.dataset.drag = "true";
+  const move = (ev) => scrubSet(wrap, pctOf(ev));
+  const up = (ev) => {
+    window.removeEventListener("pointermove", move);
+    window.removeEventListener("pointerup", up);
+    delete wrap.dataset.drag;
+    setSeason(pctOf(ev) >= 50 ? "winter" : "summer"); // snaps --x back to an end
+  };
+  window.addEventListener("pointermove", move);
+  window.addEventListener("pointerup", up);
+  move(e);
+  e.preventDefault();
+}
+function scrubKey(e) {
+  const k = e.key;
+  if (k === "ArrowLeft" || k === "ArrowDown" || k === "Home") { setSeason("summer"); e.preventDefault(); }
+  if (k === "ArrowRight" || k === "ArrowUp" || k === "End") { setSeason("winter"); e.preventDefault(); }
 }
 
 /* F — collapsed circular orb with rotating caption that expands into a
@@ -268,8 +361,8 @@ function seasonBand(variant) {
 function hero(page, variant) {
   const h = page.hero;
   const heroTabs = variant === "c" ? toggleMarkup("c") : "";
-  // F sits in the hero like C, but pinned to the right edge (as on the reference site)
-  const dialSlot = variant === "f" ? `<div class="dial-slot">${toggleMarkup("f")}</div>` : "";
+  // F–I sit in the hero like C, but pinned to its edges rather than inline
+  const dialSlot = heroOverlays(page, variant);
 
   if (h.type === "overlay") {
     return `
@@ -439,6 +532,16 @@ function setSeason(season) {
   document.documentElement.setAttribute("data-season", season);
   document.querySelectorAll("[data-season-btn]").forEach((b) =>
     b.setAttribute("aria-pressed", b.dataset.seasonBtn === season ? "true" : "false"));
+  // H — the wordless switch reports state as a checkbox, not a pressed button
+  document.querySelectorAll("[data-season-switch]").forEach((b) =>
+    b.setAttribute("aria-checked", season === "winter" ? "true" : "false"));
+  // G — park the wipe at whichever end matches the season
+  document.querySelectorAll(".scrub-wrap").forEach((w) =>
+    w.style.setProperty("--x", season === "winter" ? "100%" : "0%"));
+  document.querySelectorAll(".scrub-track").forEach((t) => {
+    t.setAttribute("aria-valuenow", season === "winter" ? "100" : "0");
+    t.setAttribute("aria-valuetext", season === "winter" ? "Winter" : "Summer");
+  });
   try { localStorage.setItem("ta-season", season); } catch (e) {}
 }
 function initialSeason() {

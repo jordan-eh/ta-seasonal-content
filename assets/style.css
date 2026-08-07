@@ -408,3 +408,145 @@ html[data-season="winter"] .dial-tab[data-season-btn="winter"] { font-weight: 70
   .dial-orb { width: 86px; height: 86px; }
   .dial-tab { font-size: 17px; min-width: 78px; }
 }
+
+/* ============================================================
+   Shared anchor slots for the abstract variants (H, I).
+   The overlay hero anchors to <section>, which carries the global
+   54px section padding, so those offsets are re-based.
+   ============================================================ */
+.hero-slot { position: absolute; z-index: 4; }
+.hero-slot--tr { top: 22px; right: max(24px, calc((100% - 1228px)/2 + 24px)); }
+.hero-slot--br { bottom: 26px; right: max(24px, calc((100% - 1228px)/2 + 24px)); }
+.hero--overlay .hero-slot--tr { top: calc(54px + 22px); }
+.hero--overlay .hero-slot--br { bottom: calc(54px + 26px); }
+
+/* ============================================================
+   G — Season scrubber. Drag the handle to wipe a winter-graded copy
+   of the hero across the summer one; releasing snaps to the nearer
+   season. Pattern borrowed from before/after comparison sliders.
+   ============================================================ */
+.scrub-wrap { position: absolute; inset: 0; pointer-events: none; --x: 0%; }
+.hero--overlay .scrub-wrap { inset: 54px 0; }
+.scrub-winter {
+  position: absolute; inset: 0; z-index: 1;
+  background-size: cover; background-position: center;
+  clip-path: inset(0 calc(100% - var(--x)) 0 0);
+  filter: saturate(.26) brightness(1.18) contrast(.88);
+  transition: clip-path .5s cubic-bezier(.4,0,.2,1);
+}
+/* below the red title box on the overlay hero, but still above the photo tint */
+.hero--overlay .scrub-winter { z-index: 0; }
+.scrub-winter::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(168,204,234,.40), rgba(32,74,114,.54));
+}
+/* the seam that follows the wipe */
+.scrub-winter::before {
+  content: ""; position: absolute; top: 0; bottom: 0; right: 0; width: 2px;
+  background: rgba(255,255,255,.85); box-shadow: 0 0 14px rgba(255,255,255,.5);
+}
+.scrub-track {
+  position: absolute; z-index: 4; bottom: 26px; pointer-events: auto;
+  right: max(24px, calc((100% - 1228px)/2 + 24px));
+  width: 320px; height: 46px; cursor: ew-resize; touch-action: none;
+  display: flex; align-items: center; gap: 12px;
+  border-radius: 999px; padding: 0 16px;
+  background: rgba(12,26,38,.42); backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.28);
+}
+.scrub-end { flex: none; font-size: 15px; color: #fff; opacity: .6; transition: opacity .3s ease; }
+html[data-season="summer"] .scrub-end--s,
+html[data-season="winter"] .scrub-end--w { opacity: 1; }
+.scrub-rail { position: relative; flex: 1; height: 3px; border-radius: 3px; background: rgba(255,255,255,.4); }
+.scrub-handle {
+  position: absolute; top: 50%; left: calc(16px + 27px + var(--x) * 0.74); /* rail span, minus glyph gutters */
+  width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 999px;
+  background: #fff; box-shadow: 0 3px 12px rgba(0,0,0,.4);
+  transition: left .5s cubic-bezier(.4,0,.2,1);
+}
+.scrub-handle::after {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 9px; height: 2px;
+  margin: -1px 0 0 -4.5px; border-radius: 2px; background: #9aa3a8;
+  box-shadow: 0 -4px 0 #9aa3a8, 0 4px 0 #9aa3a8;
+}
+.scrub-track:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.scrub-wrap[data-drag="true"] .scrub-winter,
+.scrub-wrap[data-drag="true"] .scrub-handle { transition: none; }
+
+/* ============================================================
+   H — Wordless sun/snow switch. Reads like a dark-mode toggle:
+   no labels, the knob and gradient carry the whole message.
+   ============================================================ */
+.wswitch {
+  position: relative; width: 96px; height: 48px; padding: 0; cursor: pointer;
+  border-radius: 999px; border: 1.5px solid rgba(255,255,255,.65);
+  background: linear-gradient(120deg, #f2ad42, #d95f27);
+  box-shadow: 0 8px 26px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.4);
+  transition: background .55s ease;
+}
+html[data-season="winter"] .wswitch { background: linear-gradient(120deg, #9cc9ea, #24648f); }
+.ws-knob {
+  position: absolute; top: 4px; left: 4px; width: 37px; height: 37px; border-radius: 999px;
+  background: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 19px; line-height: 1; color: #d95f27;
+  box-shadow: 0 3px 10px rgba(0,0,0,.3);
+  transition: left .42s cubic-bezier(.5,.05,.3,1.25), color .45s ease;
+}
+html[data-season="winter"] .ws-knob { left: 52px; color: #24648f; }
+.wswitch:hover .ws-knob { transform: scale(1.05); }
+.wswitch:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+
+/* ============================================================
+   I — Season gauge. A thermostat-style instrument: the needle
+   swings between a sun and a snowflake on a dotted arc scale.
+   ============================================================ */
+.gauge {
+  position: relative; width: 214px; height: 118px; padding: 8px;
+  border-radius: 112px 112px 22px 22px;
+  background: rgba(12,26,38,.40);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.26), 0 8px 26px rgba(0,0,0,.35);
+}
+.gauge svg { display: block; width: 198px; height: 102px; }
+.gauge .g-track {
+  fill: none; stroke: rgba(255,255,255,.62); stroke-width: 5;
+  stroke-linecap: round; stroke-dasharray: 2 8;
+}
+/* pivot sits at the arc centre: 8px padding + 95px = 50% of 214 */
+.g-hub {
+  position: absolute; left: 50%; bottom: 10px; width: 14px; height: 14px; margin-left: -7px;
+  border-radius: 999px; background: #fff; box-shadow: 0 0 0 4px rgba(255,255,255,.2);
+}
+.g-needle {
+  position: absolute; left: 50%; bottom: 17px; width: 4px; height: 60px; margin-left: -2px;
+  border-radius: 4px; transform-origin: 50% 100%;
+  background: linear-gradient(180deg, #fff, rgba(255,255,255,.5));
+  transition: transform .6s cubic-bezier(.45,.05,.25,1.2);
+}
+html[data-season="summer"] .g-needle { transform: rotate(-52deg); }
+html[data-season="winter"] .g-needle { transform: rotate(52deg); }
+.g-needle::before {
+  content: ""; position: absolute; top: -5px; left: -3px; width: 10px; height: 10px;
+  border-radius: 999px; background: #fff; box-shadow: 0 0 8px rgba(255,255,255,.7);
+}
+.g-end {
+  position: absolute; bottom: 7px; width: 42px; height: 42px; border-radius: 999px;
+  border: 0; cursor: pointer; font-size: 19px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.24); color: rgba(255,255,255,.85);
+  transition: background .3s ease, color .3s ease, transform .25s ease, box-shadow .3s ease;
+}
+.g-end:hover { transform: scale(1.08); }
+.g-end:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.g-end--s { left: 7px; }
+.g-end--w { right: 7px; }
+html[data-season="summer"] .g-end--s { background: #fff; color: #d95f27; box-shadow: 0 0 0 4px rgba(255,255,255,.22); }
+html[data-season="winter"] .g-end--w { background: #fff; color: #24648f; box-shadow: 0 0 0 4px rgba(255,255,255,.22); }
+
+@media (max-width: 720px) {
+  .scrub-track { width: min(320px, calc(100vw - 48px)); }
+  .gauge { transform: scale(.82); transform-origin: bottom right; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scrub-winter, .scrub-handle, .g-needle, .ws-knob { transition: none; }
+}
