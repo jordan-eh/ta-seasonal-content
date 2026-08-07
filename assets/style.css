@@ -328,3 +328,83 @@ html[data-season="winter"] .toggle--spotlight .seg[data-season-btn="winter"] { b
 html[data-season="summer"] .toggle--float .seg[data-season-btn="summer"],
 html[data-season="winter"] .toggle--float .seg[data-season-btn="winter"] { background: var(--red); color: #fff; }
 @media (max-width: 560px){ .season-float .sf-label { display: none; } }
+
+/* ============================================================
+   F — Season dial (Destination Vancouver "SeasonSelectButton" pattern)
+   Closed: a colored orb in the hero with a slowly rotating caption ring.
+   Open:   the caption fades, the orb shrinks and a white pill slides out
+           carrying the season tabs. Right-aligned, as on the reference.
+   ============================================================ */
+.dial-slot {
+  position: absolute; z-index: 3; bottom: 26px;
+  right: max(24px, calc((100% - 1228px)/2 + 24px));
+}
+/* On the overlay hero the slot anchors to the <section>, which carries the
+   global 54px section padding — offset it so the dial sits inside the photo.
+   The banner/centered heroes anchor to .photo directly and need no offset. */
+.hero--overlay .dial-slot { bottom: calc(54px + 26px); }
+.toggle--dial { display: block; }
+.dial-shell {
+  display: flex; flex-direction: row-reverse; align-items: center;
+  border-radius: 999px; padding: 8px; background: transparent;
+  transition: background-color .3s ease, box-shadow .3s ease, padding .3s ease;
+}
+.toggle--dial[data-open="true"] .dial-shell {
+  background: #fff; padding: 8px 8px 8px 24px;
+  box-shadow: inset 0 0 0 1px rgba(189,189,189,.4), 0 0 20px rgba(0,0,0,.12);
+}
+
+/* the orb — wrapper is oversized so the caption ring can circle the disc */
+.dial-orb {
+  position: relative; flex: none; width: 106px; height: 106px;
+  border: 0; padding: 0; background: transparent; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: width .3s ease, height .3s ease;
+}
+.toggle--dial[data-open="true"] .dial-orb { width: 64px; height: 64px; }
+.dial-orb::before {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 999px;
+  background: var(--red); box-shadow: 0 6px 20px rgba(0,0,0,.28);
+  transition: background-color .4s ease, transform .25s ease;
+}
+html[data-season="winter"] .dial-orb::before { background: var(--teal); }
+.dial-orb:hover::before { transform: scale(1.06); }
+.dial-orb:focus-visible { outline: 3px solid #fff; outline-offset: 3px; border-radius: 999px; }
+.dial-glyph { position: relative; z-index: 2; color: #fff; font-size: 26px; line-height: 1; }
+
+/* rotating "CHOOSE A SEASON" caption — hidden once the pill is open */
+.dial-ring {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; opacity: 1;
+  animation: dial-rotate 9s linear infinite;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,.5));
+  transition: opacity .25s ease;
+}
+.toggle--dial[data-open="true"] .dial-ring { opacity: 0; }
+.dial-ring text { fill: #fff; font-family: var(--sans); font-size: 7.4px; font-weight: 700; letter-spacing: 1.45px; }
+@keyframes dial-rotate { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .dial-ring { animation: none; } }
+
+/* the season tabs that slide out of the pill */
+.dial-tabs {
+  display: flex; align-items: center;
+  max-width: 0; opacity: 0; overflow: hidden;
+  transition: max-width .35s ease, opacity .25s ease;
+}
+.toggle--dial[data-open="true"] .dial-tabs { max-width: 320px; opacity: 1; }
+.dial-tab {
+  border: 0; background: transparent; cursor: pointer; white-space: nowrap;
+  font-family: var(--sans); font-size: 20px; line-height: 28px; font-weight: 500;
+  color: var(--muted); min-width: 96px; text-align: center; padding: 0 4px;
+  transition: color .2s ease;
+}
+.dial-tab:hover { color: var(--ink); font-weight: 700; }
+html[data-season="summer"] .dial-tab[data-season-btn="summer"] { font-weight: 700; color: var(--red); }
+html[data-season="winter"] .dial-tab[data-season-btn="winter"] { font-weight: 700; color: var(--teal); }
+
+@media (max-width: 720px) {
+  .dial-slot { bottom: 14px; right: 14px; }
+  .dial-orb { width: 86px; height: 86px; }
+  .dial-tab { font-size: 17px; min-width: 78px; }
+}

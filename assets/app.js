@@ -1,6 +1,6 @@
 /* ============================================================
    Travel Alberta — Seasonal Toggle POC engine
-   One file renders all 15 prototypes (3 pages × 5 toggle variants).
+   One file renders every prototype (3 pages × 6 toggle variants).
    Nav + breadcrumb + hero + "Choose a season" band + intro +
    first content grid are matched to the Figma PHASE 2 frames.
    Sections below that (feature / listing / stories) are
@@ -176,7 +176,7 @@ function footer() {
   </div></footer>`;
 }
 
-/* ---------- toggle markup (5 variants) ---------- */
+/* ---------- toggle markup (6 variants) ---------- */
 function toggleMarkup(variant) {
   const seg = (s, icon, label) =>
     `<button class="seg" data-season-btn="${s}" onclick="setSeason('${s}')" aria-pressed="false">
@@ -198,8 +198,44 @@ function toggleMarkup(variant) {
     case "e": // floating segmented pill
       return `<div class="toggle toggle--float" role="tablist" aria-label="Season">
         ${seg("summer", "☀", "Summer")}${seg("winter", "❄", "Winter")}</div>`;
+    case "f": // expanding season dial (Destination Vancouver pattern)
+      return seasonDial();
   }
   return "";
+}
+
+/* F — collapsed circular orb with rotating caption that expands into a
+   white season pill. Modelled on destinationvancouver.com's SeasonSelectButton. */
+function seasonDial() {
+  const tab = (s, label) =>
+    `<button class="dial-tab" data-season-btn="${s}" onclick="setSeason('${s}')" aria-pressed="false">${label}</button>`;
+  return `
+  <div class="toggle toggle--dial" data-open="false">
+    <div class="dial-shell">
+      <button class="dial-orb" type="button" aria-expanded="false" aria-label="Season selector"
+              onclick="toggleDial(this)">
+        <svg class="dial-ring" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+          <path id="dialArc" fill="none"
+                d="M50,50 m-39,0 a39,39 0 1,1 78,0 a39,39 0 1,1 -78,0"></path>
+          <text><textPath href="#dialArc" startOffset="0">CHOOSE A SEASON · CHOOSE A SEASON ·</textPath></text>
+        </svg>
+        <span class="dial-glyph" data-show="summer" aria-hidden="true">☀</span>
+        <span class="dial-glyph" data-show="winter" aria-hidden="true">❄</span>
+      </button>
+      <div class="dial-tabs" role="tablist" aria-label="Season">
+        ${tab("summer", "Summer")}${tab("winter", "Winter")}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* Open/close the dial. Collapsed it is just the spinning orb; open it becomes
+   a white pill with the season tabs beside it. */
+function toggleDial(btn) {
+  const root = btn.closest(".toggle--dial");
+  const open = root.dataset.open !== "true";
+  root.dataset.open = open ? "true" : "false";
+  btn.setAttribute("aria-expanded", open ? "true" : "false");
 }
 
 /* D — high-visibility full-width band directly under the hero */
@@ -232,11 +268,14 @@ function seasonBand(variant) {
 function hero(page, variant) {
   const h = page.hero;
   const heroTabs = variant === "c" ? toggleMarkup("c") : "";
+  // F sits in the hero like C, but pinned to the right edge (as on the reference site)
+  const dialSlot = variant === "f" ? `<div class="dial-slot">${toggleMarkup("f")}</div>` : "";
 
   if (h.type === "overlay") {
     return `
     <section class="hero--overlay">
       <div class="photo" style="background-image:url('${h.img}')"></div>
+      ${dialSlot}
       <div class="titlebox">
         <h1>${h.title}</h1>
         <p>${h.blurb}</p>
@@ -250,6 +289,7 @@ function hero(page, variant) {
     <section class="hero--banner">
       <div class="photo" style="background-image:url('${h.img}')">
         ${variant === "c" ? `<div style="position:absolute;left:24px;bottom:18px;z-index:2">${heroTabs}</div>` : ""}
+        ${dialSlot}
       </div>
     </section>
     <div class="wrap"><div class="hero-titlebar"><div class="row">
@@ -267,6 +307,7 @@ function hero(page, variant) {
         <h1>${h.title}</h1>
         ${variant === "c" ? `<div style="margin-top:20px;display:flex;justify-content:center">${heroTabs}</div>` : ""}
       </div>
+      ${dialSlot}
     </div>
     <div class="redrule"></div>
     <div class="wrap"><div class="city-known"><b>City known for:</b>${known}</div></div>
